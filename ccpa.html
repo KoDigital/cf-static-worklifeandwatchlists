@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Do not sell my personal information</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no, maximum-scale=1.0">
+
+    <link rel="icon" href="https://imgstg.amani.media/favicon/fav32.png" sizes="32x32">
+    <link rel="icon" href="https://imgstg.amani.media/favicon/fav192.png" sizes="192x192">
+    <link rel="apple-touch-icon" href="https://imgstg.amani.media/favicon/fav180.png" sizes="180x180">
+
+    <meta name="robots" content="noindex" />
+
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com/" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+
+    <link rel="preload" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap" as="style">
+    <link rel="preload" href="https://static.amani.media/style.css" as="style">
+
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap">
+    <link rel="stylesheet" type="text/css" href="https://static.amani.media/style.css">
+</head>
+
+<body>
+    <header class="top-header" style="background-color: #2B0E2D;">
+        <a href="https://stylingod.com">
+            <img width="250" height="51" src="https://imgstg.amani.media/logo/logo.png" alt="">
+        </a>
+    </header>
+    <main style="padding-bottom: 40px;">
+        <style>
+            #ccpa-button {
+                padding: 1em;
+                border-radius: 0.2em;
+                border: none;
+                background: #007bff;
+                color: #fff;
+                cursor: pointer;
+                text-align: center;
+            }
+            #ccpa-button:hover {
+                background: #0069d9;
+            }
+        </style>
+        <div class="container">
+            <div class="content-wrapper" style="line-height: 2">
+                <h1 style="text-align: center">Do not sell my personal information</h1>
+                <h2>Your rights under the California Consumer Privacy Act</h2>
+                <p>The California Consumer Privacy Act (CCPA) provides you with rights regarding how your data or personal information is treated. Under the legislation, California residents can choose to opt out of the “sale” of their personal information to third parties. Based on the CCPA definition, “sale” refers to data collection for the purpose of creating advertising and other communications. <a href="https://oag.ca.gov/privacy/ccpa" target="_blank" rel="noreferrer noopener" class="js-no-transition">Learn more about CCPA and your privacy rights</a>.</p>
+                <p><strong>How to opt out</strong></p>
+                <p>By clicking on the link below, we will no longer collect or sell your personal information. This applies to both third-parties and the data we collect to help personalize your experience on our website or through other communications. For more information, view our privacy policy.</p>
+                <div style="text-align: center;"><button id="ccpa-button"></button></div>
+            </div>
+        </div>
+        <script>
+            (function() {
+                const CCPA_OPT_OUT_COOKIE_KEY = 'ccpa_opt_out';
+                const buttonCCPA = document.getElementById('ccpa-button');
+                updateButtonText();
+                buttonCCPA.addEventListener('click', function() {
+                    if (isOptedOutCCPA()) {
+                        deleteCookie(CCPA_OPT_OUT_COOKIE_KEY);
+                    } else {
+                        setCookie(CCPA_OPT_OUT_COOKIE_KEY, '1', 365); // 1 year TTL
+                    }
+                    alert('Preferences updated');
+                    updateButtonText();
+                })
+                function getCookie(name) {
+                    return (document.cookie || '').split('; ').reduce((result, currentCookie) => {
+                        const parts = currentCookie.split('=');
+                        return parts[0] === name ? decodeURIComponent(parts[1]) : result;
+                    }, '');
+                }
+                function setCookie(name, value, ttlDays) {
+                    const expires = new Date(Date.now() + (ttlDays * 24 * 60 * 60 * 1000)).toUTCString();
+                    document.cookie = name + '=' + encodeURIComponent(value) + '; expires=' + expires + '; path=/';
+                }
+                function deleteCookie(name) {
+                    setCookie(name, '', -1);
+                }
+                function isOptedOutCCPA() {
+                    return getCookie(CCPA_OPT_OUT_COOKIE_KEY) === '1';
+                }
+                function updateButtonText() {
+                    buttonCCPA.innerText = isOptedOutCCPA() ? 'Allow my data to be shared with third-parties' : 'Do not sell my personal information';
+                }
+            })();
+        </script>
+    </main>
+    <footer class="bottom-footer">
+        <div class="footer-container">
+        <div class="links">
+            <a href="https://stylingod.com/about-us/" >About Us</a>
+            <a href="https://stylingod.com/disclaimer/" >Disclaimer</a>
+            <a href="https://stylingod.com/terms-of-use/" >Terms of Use</a>
+            <a href="https://stylingod.com/privacy-and-cookie-policy/" >Privacy and Cookie Policy</a>
+            <a href="https://stylingod.com/contact-us/" >Contact Us</a>
+            <a href="/koen/ccpa">California Consumer Privacy Act (CCPA)</a>
+        </div>
+        <div class="copyright"></div>
+        </div>
+    </footer>
+</body>
+
+</html>
