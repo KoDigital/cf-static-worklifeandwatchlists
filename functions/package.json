@@ -1,0 +1,17 @@
+{
+  "name": "stylingod-function",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "(cd .. && npx wrangler pages dev .)"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^3.4.0",
+    "@types/ua-parser-js": "^0.7.36"
+  },
+  "dependencies": {
+    "base64url": "^3.0.1",
+    "crypto-js": "^4.2.0",
+    "isbot": "^3.4.5",
+    "ua-parser-js": "^1.0.35"
+  }
+}
